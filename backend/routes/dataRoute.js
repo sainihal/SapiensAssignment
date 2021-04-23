@@ -1,18 +1,22 @@
 const express = require("express");
 const UserInfo = require("../models/UserInfo");
+const { userDataValidation } = require("../validations");
 
 const router = express.Router();
 
 router.post("/", async (req, res) => {
+  const { error } = userDataValidation(req.body);
+  if (error) {
+    res.status(400).json({ error: true, message: error.details[0].message });
+    return;
+  }
   try {
     const user_data = await UserInfo.findOne({ email: req.body.email });
     if (user_data) {
-      res
-        .status(400)
-        .json({
-          error: true,
-          message: "User with specified email already exists",
-        });
+      res.status(400).json({
+        error: true,
+        message: "User with specified email already exists",
+      });
     } else {
       const { first_name, last_name, email } = req.body;
       const user = new UserInfo({ first_name, last_name, email });
@@ -33,9 +37,8 @@ router.get("/", async (req, res) => {
     const users = await UserInfo.find({});
     res.status(200).json({ error: false, data: users });
   } catch (err) {
-    console.log("Err is ", err);
     res
-      .status(400)
+      .status(500)
       .json({ error: true, message: "pls try again after some time" });
   }
 });

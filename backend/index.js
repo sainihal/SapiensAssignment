@@ -22,6 +22,6 @@ mongoose.connect(
 const dataRoute = require("./routes/dataRoute");
 app.use("/api/data", dataRoute);
 
-app.listen(process.env.PORT || 8001, () => {
-  console.log("The server is running on port 8001");
+app.listen(process.env.PORT || 8002, () => {
+  console.log("The server is running on port 8002");
 });
